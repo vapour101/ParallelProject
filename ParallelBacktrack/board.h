@@ -5,6 +5,7 @@
 #include <utility>
 #include <boost/functional/hash.hpp>
 #include <string>
+#include <list>
 
 struct PairHash {
 public:
@@ -29,12 +30,14 @@ class Board
 {
 public:
 	Board();
+	Board(const Board& other);
+
 	bool isFinal() const;
 	bool isLegal(Move) const;
 	void executeMove(Move);
 	std::string toString() const;
-    int calcHeuristic() const; //check
-    bool isInvalid() const; //check
+	bool isInvalid() const;
+	std::vector<Move> getLegalMoves() const;
 
 private:
 	std::unordered_set<Coord, PairHash> pegs;

@@ -5,13 +5,28 @@ using namespace std;
 
 Board::Board()
 {
-	for (int i = 0; i < 7; i++)
+	/*for (int i = 0; i < 7; i++)
 		for (int j = 0; j < 7; j++)
 		{
 			Coord coord = make_pair(i, j);
 			if (withinBounds(coord))
 				pegs.insert(coord);
-		}
+		}*/
+
+	Coord a = make_pair(4,4);
+	Coord b = make_pair(3,5);
+	Coord c = make_pair(5,4);
+
+	pegs.insert(a);
+	pegs.insert(b);
+	pegs.insert(c);
+}
+
+Board::Board(const Board& other)
+{
+	for (Coord peg : other.pegs) {
+		pegs.insert(peg);
+	}
 }
 
 bool Board::isFinal() const
@@ -69,17 +84,7 @@ string Board::toString() const
     return out;
 }
 
-int Board::calcHeuristic() const //TODO: Vincent check this
-{
-    int sum=0;
-    for (const auto& coord: pegs){
-        int exponent=max(abs(coord.first-3), abs(coord.second-3));
-        sum += pow(2, exponent);
-    }
-    return sum;
-}
-
-bool Board::isInvalid() const //TODO: Vincent check this
+bool Board::isInvalid() const
 {
     for (const auto& coord: pegs){
         for (int i=0; i<=3; i++){
@@ -89,7 +94,26 @@ bool Board::isInvalid() const //TODO: Vincent check this
             }
         }
     }
-    return true;
+	return true;
+}
+
+std::vector<Move> Board::getLegalMoves() const
+{
+	std::vector<Move> res{};
+
+	for (Coord peg : pegs) {
+		for (int i = 0; i < 4; ++i)
+		{
+			Move move=std::make_pair(peg, (Direction) i);
+
+			if (isLegal(move)){
+				res.push_back(move);
+			}
+		}
+	}
+
+
+	return res;
 }
 
 Coord Board::getPosition(Move move) const
@@ -154,6 +178,7 @@ Coord Board::getJumped(Move move) const
 		break;
 	case SOUTH:
 		start.second -= 1;
+		break;
 	case EAST:
 		start.first += 1;
 		break;
