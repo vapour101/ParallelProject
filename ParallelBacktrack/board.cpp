@@ -1,4 +1,5 @@
 #include "board.h"
+#include "cmath"
 
 using namespace std;
 
@@ -65,7 +66,30 @@ string Board::toString() const
 			}
 		}
 
-	return out;
+    return out;
+}
+
+int Board::calcHeuristic() const //TODO: Vincent check this
+{
+    int sum=0;
+    for (const auto& coord: pegs){
+        int exponent=max(abs(coord.first-3), abs(coord.second-3));
+        sum += pow(2, exponent);
+    }
+    return sum;
+}
+
+bool Board::isInvalid() const //TODO: Vincent check this
+{
+    for (const auto& coord: pegs){
+        for (int i=0; i<=3; i++){
+            Move move=std::make_pair(coord, (Direction) i);
+            if (isLegal(move)){
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 Coord Board::getPosition(Move move) const

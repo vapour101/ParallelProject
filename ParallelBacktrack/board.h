@@ -33,6 +33,8 @@ public:
 	bool isLegal(Move) const;
 	void executeMove(Move);
 	std::string toString() const;
+    int calcHeuristic() const; //check
+    bool isInvalid() const; //check
 
 private:
 	std::unordered_set<Coord, PairHash> pegs;
