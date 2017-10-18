@@ -15,6 +15,8 @@ public:
 	void start();
 	std::list<Move> getSolution();
 	std::chrono::nanoseconds getDuration();
+	int getInfeasibleCount();
+	int getFailed();
 	bool hasSolution();
 	void print(std::ostream& out);
 	void printSequence(std::ostream& out);
@@ -26,6 +28,8 @@ private:
 
 	Board initialBoard;
 	int threadingDepth;
+	int infeasibleOrder;
+	int failed;
 
 	bool checked;
 	bool solvable;

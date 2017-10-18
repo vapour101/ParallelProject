@@ -10,7 +10,7 @@ vector<string> readLinesFromFile(string filename);
 
 int main()
 {
-	vector<string> boards = readLinesFromFile("/home/vapour101/Development/Uni/PC/ParallelProject/ParallelBacktrack/initial_states/moves:10");
+	/*vector<string> boards = readLinesFromFile("/home/vapour101/Development/Uni/PC/ParallelProject/ParallelBacktrack/initial_states/moves:20");
 
 	for (string board : boards) {
 		Board check{board};
@@ -18,7 +18,14 @@ int main()
 
 		checker.start();
 		checker.print(cout);
-	}
+		if (!checker.hasSolution())
+			checker.print(cout);
+	}*/
+
+	Board check{"..+++....+o+..++ooo+++ooooo+ooooooo..+++....+++.."};
+	backtrack checker(check, 4);
+	checker.start();
+	checker.print(cout);
 
 	return 0;
 }

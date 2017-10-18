@@ -5,13 +5,16 @@ using namespace std;
 
 Board::Board()
 {
-	Coord a = make_pair(4,4);
-	Coord b = make_pair(3,5);
-	Coord c = make_pair(5,4);
+	for (int i = 0; i < 7; i++)
+		for (int j = 0; j < 7; j++)
+		{
+			if (i == 3 && j == 3)
+				continue;
 
-	pegs.insert(a);
-	pegs.insert(b);
-	pegs.insert(c);
+			Coord coord = make_pair(i, j);
+			if (withinBounds(coord))
+				pegs.insert(coord);
+		}
 }
 
 Board::Board(const Board& other)

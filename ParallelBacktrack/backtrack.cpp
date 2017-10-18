@@ -10,6 +10,9 @@ list<Move> backtrack::recurse(Board state)
 
 	vector<Move> legal = state.getLegalMoves();
 
+	if (legal.empty())
+		++failed;
+
 #pragma omp parallel for schedule(dynamic) shared(state) shared(result)
 	for (int i = 0; i < legal.size(); i++)
 	{
@@ -59,6 +62,8 @@ backtrack::backtrack(Board start, int depth)
 
 	checked = false;
 	solvable = false;
+	infeasibleOrder = 10;
+	failed = 0;
 }
 
 void backtrack::start()
@@ -95,6 +100,16 @@ chrono::nanoseconds backtrack::getDuration()
 	return duration;
 }
 
+int backtrack::getInfeasibleCount()
+{
+	return infeasibleBoards.size();
+}
+
+int backtrack::getFailed()
+{
+	return failed;
+}
+
 bool backtrack::hasSolution()
 {
 	if ( !checked )
@@ -114,6 +129,8 @@ void backtrack::print(ostream& out)
 	}
 
 	out << "Solution found in " << getDuration().count() / 1000000 << "ms." << endl;
+	out << "Checked dead states: " << getFailed() << endl;
+	out << "Infeasible states found: " << getInfeasibleCount() << endl;
 	out << "Length: " << getSolution().size() << " moves." << endl;
 	out << "Solution:" << endl;
 
@@ -147,13 +164,17 @@ bool backtrack::isInfeasible(Board check)
 	return infeasibleBoards.count(hash);
 }
 
-
 void backtrack::addInfeasible(Board board)
 {
 	size_t hash = BoardHash()(board);
-	#pragma omp critical
+#pragma omp critical
 	{
-	infeasibleBoards.insert(hash);
+		infeasibleBoards.insert(hash);
+		/*if (infeasibleBoards.size() > infeasibleOrder)
+		{
+			cout << infeasibleBoards.size() << endl;
+			infeasibleOrder *= 10;
+		}*/
 	}
 }
 
