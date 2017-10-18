@@ -9,7 +9,7 @@ directions = [[1, 0], [-1, 0], [0, 1], [0, -1]]
 def in_bounds(point):
     if (0 <= point[0] <= 1 or 5 <= point[0] <= 6) and (0 <= point[1] <= 1 or 5 <= point[1] <= 6):
         return False
-    if point[0] < 0 or point[0] < 0 or point[0] > 6 or point[1] > 6:
+    if point[0] < 0 or point[1] < 0 or point[0] > 6 or point[1] > 6:
         return False
     return True
 
