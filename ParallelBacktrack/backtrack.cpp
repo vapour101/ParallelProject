@@ -4,16 +4,16 @@
 
 using namespace std;
 
-list<Move> backtrack::recurse(Board state)
+list<Move> backtrack::recurse(const Board& state)
 {
-	list<Move> result{};
+	list<Move> result;
 
 	vector<Move> legal = state.getLegalMoves();
 
 	if (legal.empty())
 		++failed;
 
-#pragma omp parallel for schedule(dynamic) shared(state) shared(result)
+#pragma omp parallel for if(parallelise) schedule(dynamic) shared(state) shared(result)
 	for (int i = 0; i < legal.size(); i++)
 	{
 		Board privateState = state;
@@ -55,14 +55,11 @@ list<Move> backtrack::recurse(Board state)
 	return result;
 }
 
-backtrack::backtrack(Board start, int depth)
+backtrack::backtrack(const Board& start) : initialBoard{start}
 {
-	initialBoard = start;
-	threadingDepth = depth;
-
+	parallelise = false;
 	checked = false;
 	solvable = false;
-	infeasibleOrder = 10;
 	failed = 0;
 }
 
@@ -70,8 +67,8 @@ void backtrack::start()
 {
 	chrono::high_resolution_clock::time_point start, stop;
 
-	omp_set_nested(true);
-	omp_set_max_active_levels(threadingDepth);
+	//omp_set_nested(true);
+	//omp_set_max_active_levels(threadingDepth);
 
 	checked = true;
 
@@ -100,12 +97,12 @@ chrono::nanoseconds backtrack::getDuration()
 	return duration;
 }
 
-int backtrack::getInfeasibleCount()
+int backtrack::getInfeasibleCount() const
 {
 	return infeasibleBoards.size();
 }
 
-int backtrack::getFailed()
+int backtrack::getFailed() const
 {
 	return failed;
 }
@@ -129,6 +126,7 @@ void backtrack::print(ostream& out)
 	}
 
 	out << "Solution found in " << getDuration().count() / 1000000 << "ms." << endl;
+	out << "Solution method: " << (isParallel() ? "Parallel" : "Sequential") << endl;
 	out << "Checked dead states: " << getFailed() << endl;
 	out << "Infeasible states found: " << getInfeasibleCount() << endl;
 	out << "Length: " << getSolution().size() << " moves." << endl;
@@ -158,23 +156,42 @@ void backtrack::printSequence(ostream& out)
 	}
 }
 
-bool backtrack::isInfeasible(Board check)
+void backtrack::printTime(ostream& out)
+{
+	out << (isParallel() ? "Parallel Time:\t\t" : "Sequential Time:\t");
+	out << getDuration().count() << "ns" << endl;
+}
+
+void backtrack::setParallel(bool parallel)
+{
+	parallelise = parallel;
+}
+
+bool backtrack::isParallel() const
+{
+	return parallelise;
+}
+
+void backtrack::clear()
+{
+	checked = false;
+	solvable = false;
+	solution.clear();
+	infeasibleBoards.clear();
+}
+
+bool backtrack::isInfeasible(const Board& check)
 {
 	size_t hash = BoardHash()(check);
 	return infeasibleBoards.count(hash);
 }
 
-void backtrack::addInfeasible(Board board)
+void backtrack::addInfeasible(const Board& board)
 {
 	size_t hash = BoardHash()(board);
 #pragma omp critical
 	{
 		infeasibleBoards.insert(hash);
-		/*if (infeasibleBoards.size() > infeasibleOrder)
-		{
-			cout << infeasibleBoards.size() << endl;
-			infeasibleOrder *= 10;
-		}*/
 	}
 }
 

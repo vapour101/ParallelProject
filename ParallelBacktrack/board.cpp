@@ -24,7 +24,7 @@ Board::Board(const Board& other)
 	}
 }
 
-Board::Board(string input)
+Board::Board(const string& input)
 {
 	char temp;
 	istringstream inStream{input};

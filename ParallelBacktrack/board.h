@@ -32,7 +32,7 @@ class Board
 public:
 	Board();
 	Board(const Board& other);
-	Board(std::string input);
+	Board(const std::string& input);
 
 	bool isFinal() const;
 	bool isLegal(Move) const;
