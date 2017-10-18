@@ -4,59 +4,24 @@
 
 using namespace std;
 
-void printDirection(Direction direction) {
-	switch(direction) {
-	case NORTH:
-		cout << "NORTH";
-		break;
-	case SOUTH:
-		cout << "SOUTH";
-		break;
-	case EAST:
-		cout << "EAST";
-		break;
-	case WEST:
-		cout << "WEST";
-		break;
-	}
-}
-
-void printCoord(Coord coord) {
-
-		cout << "(" << coord.first << ", " << coord.second << ")";
-
-}
-
-void printMove(Move move)
-{
-#pragma omp critical
-	{
-		printCoord(move.first);
-		cout << " - ";
-		printDirection(move.second);
-		cout << endl;
-	}
-
-}
-
 list<Move> backtrack::recurse(Board state)
 {
 	list<Move> result{};
 
 	vector<Move> legal = state.getLegalMoves();
 
-#pragma omp parallel for schedule(dynamic) private(state) shared(result)
+#pragma omp parallel for schedule(dynamic) shared(state) shared(result)
 	for (int i = 0; i < legal.size(); i++)
 	{
+		Board privateState = state;
 		Move move = legal.at(i);
-		printMove(move);
 
 		if ( !result.empty() )
 			continue;
 
-		state.executeMove(move);
+		privateState.executeMove(move);
 
-		if ( state.isFinal() )
+		if ( privateState.isFinal() )
 		{
 			list<Move> temp{};
 			temp.push_back(move);
@@ -67,14 +32,14 @@ list<Move> backtrack::recurse(Board state)
 			continue;
 		}
 
-		if (isInfeasible(state))
+		if (isInfeasible(privateState))
 			continue;
 
-		list<Move> childResult = recurse(state);
+		list<Move> childResult = recurse(privateState);
 
 		if ( childResult.empty())
 		{
-			addInfeasible(state);
+			addInfeasible(privateState);
 			continue;
 		}
 

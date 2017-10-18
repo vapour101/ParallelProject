@@ -6,6 +6,7 @@
 #include <boost/functional/hash.hpp>
 #include <string>
 #include <list>
+#include <ostream>
 
 struct PairHash {
 public:
@@ -59,5 +60,8 @@ public:
 	}
 };
 
+void printDirection(std::ostream& out, Direction direction);
+void printCoords(std::ostream& out, Coord coord);
+void printMove(std::ostream& out, Move move);
 
 #endif // BOARD_H

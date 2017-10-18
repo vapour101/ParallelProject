@@ -5,14 +5,6 @@ using namespace std;
 
 Board::Board()
 {
-	/*for (int i = 0; i < 7; i++)
-		for (int j = 0; j < 7; j++)
-		{
-			Coord coord = make_pair(i, j);
-			if (withinBounds(coord))
-				pegs.insert(coord);
-		}*/
-
 	Coord a = make_pair(4,4);
 	Coord b = make_pair(3,5);
 	Coord c = make_pair(5,4);
@@ -68,8 +60,9 @@ string Board::toString() const
 {
 	string out = "";
 
-	for (int i = 0; i < 7; i++)
-		for (int j = 0; j < 7; j++)
+	for (int j = 6; j >= 0; j--)
+	{
+		for (int i = 0; i < 7; i++)
 		{
 			Coord coord = make_pair(i, j);
 			if (withinBounds(coord))
@@ -79,7 +72,11 @@ string Board::toString() const
 				else
 					out += "+";
 			}
+			else
+				out += ".";
 		}
+		out += "\n";
+	}
 
     return out;
 }
@@ -190,3 +187,34 @@ Coord Board::getJumped(Move move) const
 	return start;
 }
 
+
+void printMove(ostream& out, Move move)
+{
+	printCoords(out, move.first);
+	out << " - ";
+	printDirection(out, move.second);
+	out << endl;
+}
+
+void printDirection(ostream& out, Direction direction)
+{
+	switch (direction) {
+	case NORTH:
+		out << "NORTH";
+	break;
+	case SOUTH:
+		out << "SOUTH";
+	break;
+	case WEST:
+		out << "WEST";
+	break;
+	case EAST:
+		out << "EAST";
+	break;
+	}
+}
+
+void printCoords(ostream& out, Coord coord)
+{
+	out << "(" << coord.first << ", " << coord.second << ")";
+}

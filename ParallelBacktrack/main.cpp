@@ -8,6 +8,9 @@ using namespace std;
 int main()
 {
 	Board check{};
+
+	cout << check.toString() << endl;
+
 	backtrack checker(check, 4);
 
 	checker.start();
@@ -15,10 +18,11 @@ int main()
 	if (checker.hasSolution())
 	{
 		cout << "Solution found" << endl;
-	for (Move m : checker.getSolution())
-	{
-		cout << "(" << m.first.first << ", " << m.first.second << ")" << " - " << m.second << endl;
-	}}
+		for (Move m : checker.getSolution())
+		{
+			printMove(cout, m);
+		}
+	}
 	else {
 		cout << "No solution found" << endl;
 	}
