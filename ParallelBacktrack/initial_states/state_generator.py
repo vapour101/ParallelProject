@@ -47,7 +47,7 @@ def gen_state(moves=10):
 def make_board(pegs_state):
     board = [['.', '.', '+', '+', '+', '.', '.'], ['.', '.', '+', '+', '+', '.', '.'],
              ['+', '+', '+', '+', '+', '+', '+'],
-             ['+', '+', '+', '.', '+', '+', '+'], ['+', '+', '+', '+', '+', '+', '+'],
+             ['+', '+', '+', '+', '+', '+', '+'], ['+', '+', '+', '+', '+', '+', '+'],
              ['.', '.', '+', '+', '+', '.', '.'],
              ['.', '.', '+', '+', '+', '.', '.']]
     for peg in pegs_state:
@@ -70,15 +70,16 @@ def humanize(file):
         states = f.readlines()
     with open('human_' + str(file), 'w') as h:
         for i in states:
-            h.write(i[0:7]+'\n')
-            h.write(i[7:14]+'\n')
-            h.write(i[14:21]+'\n')
-            h.write(i[21:28]+'\n')
-            h.write(i[28:35]+'\n')
+            h.write(i[0:7] + '\n')
+            h.write(i[7:14] + '\n')
+            h.write(i[14:21] + '\n')
+            h.write(i[21:28] + '\n')
+            h.write(i[28:35] + '\n')
             h.write(i[35:42] + '\n')
             h.write(i[42:49] + '\n')
             h.write("\n\n")
 
-for i in range(10,25,5):
-    make_states(i,100)
-    humanize('moves:'+str(i))
+
+for i in range(10, 25, 5):
+    make_states(i, 100)
+    humanize('moves:' + str(i))

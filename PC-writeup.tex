@@ -1,0 +1,46 @@
+%-Document Type------------------------------------------------------------------------------
+\documentclass[12pt,a4paper]{report}
+%--------------------------------------------------------------------------------------------
+
+%Packages------------------------------------------------------------------------------------
+\usepackage[colorlinks=true,linkcolor=blue]{hyperref} %Using this package will automatically turn references into links.
+\usepackage{graphicx}
+\usepackage{listings} % Required for insertion of code
+%---------------------------------------------------------------------------------------------
+
+%Preamble-------------------------------------------------------------------------------------
+\setcounter{chapter}{1}
+\lstset{frame=single}
+%\lstloadlanguages{language=C++}
+%End Preamble---------------------------------------------------------------------------------
+
+%Document----------------------------------------------------------------------------------------
+\begin{document}
+\parindent0pt
+
+%Cover Page---------------------------------------------------------------------------------------
+\title{COMS3008: Parallel Computing Assignment}
+\author{Tau Merand 908096 \and Vincent Varkevisser 705668}
+\maketitle
+%Cover Page End-----------------------------------------------------------------------------------
+\section{Introduction}
+The game of peg solitaire is a one player game that involves jumping pegs over other pegs, in a manner similiar to checkers but on a cross shaped board. The rules are as follows:
+\begin{enumerate}
+  \item At each turn a peg must jump orthoganally over neighbouring pegs, thus removing that peg from the board.
+  \item Pegs can only jump onto an empty space.
+  \item A peg cannot jump if it has no orthoganal neighbours.
+  \item The game is "won" if the final peg is in the centre point.
+  \item If no pegs can legally move or the final peg is not in the centre the game is lost.
+\end{enumerate}
+Below is an example of a valid sequence of moves:
+
+\section{Algorithmic Analysis}
+\subsection{Serial Algorithm}
+\subsection{Parallel Algorithm}
+
+\section{Results}
+
+
+
+
+\end{document}
