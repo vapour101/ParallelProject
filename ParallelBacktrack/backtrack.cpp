@@ -58,14 +58,13 @@ list<Move> backtrack::recurse(const Board& state)
             if (!parallelise)
                 continue;
             #pragma omp cancel for
+
 		}
 
 		childResult.push_front(move);
 
         if ( result.empty() ){
 			result = childResult;
-            if (!parallelise)
-                continue;
             #pragma omp cancel for
         }
 	}
