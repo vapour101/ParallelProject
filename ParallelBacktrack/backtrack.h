@@ -4,6 +4,8 @@
 #include "board.h"
 #include <list>
 #include <unordered_set>
+#include <ostream>
+#include <chrono>
 
 class backtrack
 {
@@ -12,7 +14,10 @@ public:
 
 	void start();
 	std::list<Move> getSolution();
+	std::chrono::nanoseconds getDuration();
 	bool hasSolution();
+	void print(std::ostream& out);
+	void printSequence(std::ostream& out);
 
 private:
 	bool isInfeasible(Board check);
@@ -27,6 +32,7 @@ private:
 	std::list<Move> solution;
 
 	std::unordered_set<std::size_t> infeasibleBoards;
+	std::chrono::nanoseconds duration;
 };
 
 #endif // BACKTRACK_H

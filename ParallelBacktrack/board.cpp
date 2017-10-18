@@ -21,6 +21,33 @@ Board::Board(const Board& other)
 	}
 }
 
+Board::Board(string input)
+{
+	char temp;
+	istringstream inStream{input};
+
+	for (int j = 6; j >= 0; j--)
+	{
+		for (int i = 0; i < 7; i++)
+		{
+			Coord pos = make_pair(i, j);
+			inStream >> temp;
+
+			if (withinBounds(pos))
+			{
+				if (temp == 'o')
+					pegs.insert(pos);
+				else if (temp != '+')
+					throw "Parse error";
+			}
+			else {
+				if (temp != '.')
+					throw "Parse error";
+			}
+		}
+	}
+}
+
 bool Board::isFinal() const
 {
 	return pegs.size() == 1 && pegs.count(make_pair(3,3));
