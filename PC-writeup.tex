@@ -10,7 +10,7 @@
 
 %Preamble-------------------------------------------------------------------------------------
 \setcounter{chapter}{1}
-\lstset{frame=single}
+%\lstset{frame=single}
 %\lstloadlanguages{language=C++}
 %End Preamble---------------------------------------------------------------------------------
 
@@ -23,22 +23,24 @@
 \author{Tau Merand 908096 \and Vincent Varkevisser 705668}
 \maketitle
 %Cover Page End-----------------------------------------------------------------------------------
-\section{Introduction}
+\section*{Introduction}
 The game of peg solitaire is a one player game that involves jumping pegs over other pegs, in a manner similiar to checkers but on a cross shaped board. The rules are as follows:
 \begin{enumerate}
-  \item At each turn a peg must jump orthoganally over neighbouring pegs, thus removing that peg from the board.
+  \item A move consists of jumping a peg over an orthoganal neighbour pegs into an empty space. The peg that was jumped over is then removed from the board.
   \item Pegs can only jump onto an empty space.
-  \item A peg cannot jump if it has no orthoganal neighbours.
-  \item The game is "won" if the final peg is in the centre point.
+  \item The game is won if the final peg is in the centre space.
   \item If no pegs can legally move or the final peg is not in the centre the game is lost.
 \end{enumerate}
 Below is an example of a valid sequence of moves:
 
-\section{Algorithmic Analysis}
-\subsection{Serial Algorithm}
-\subsection{Parallel Algorithm}
+Traditionally a game starts with only the centre space empty but for the purpose of this analysis many other valid start states were considered.
+\section*{Algorithmic Analysis}
+\subsection*{Serial Algorithm}
+Recursive backtracking using depth first search was chosen as the method for state space exploration.
 
-\section{Results}
+\subsection*{Parallel Algorithm}
+
+\section*{Results}
 
 
 
