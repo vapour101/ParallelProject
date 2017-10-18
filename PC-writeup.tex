@@ -6,12 +6,11 @@
 \usepackage[colorlinks=true,linkcolor=blue]{hyperref} %Using this package will automatically turn references into links.
 \usepackage{graphicx}
 \usepackage{listings} % Required for insertion of code
+\usepackage[]{algorithm2e}
 %---------------------------------------------------------------------------------------------
 
 %Preamble-------------------------------------------------------------------------------------
-\setcounter{chapter}{1}
-%\lstset{frame=single}
-%\lstloadlanguages{language=C++}
+
 %End Preamble---------------------------------------------------------------------------------
 
 %Document----------------------------------------------------------------------------------------
@@ -36,7 +35,31 @@ Below is an example of a valid sequence of moves:
 Traditionally a game starts with only the centre space empty but for the purpose of this analysis many other valid start states were considered.
 \section*{Algorithmic Analysis}
 \subsection*{Serial Algorithm}
-Recursive backtracking using depth first search was chosen as the method for state space exploration.
+Recursive backtracking using depth first search was chosen as the method for state space exploration. The standard depth first algorithm would be as follows:
+\begin{algorithm}[]
+  \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+
+  \Input{An initial, valid board state}
+  \Output{A sequence of moves to get from the initial state to the winning state}
+  \BlankLine
+  $result\leftarrow$ Empty list to store moves from the initial state to the winning state
+  $legalMoves\leftarrow$ A list of all the legal moves for the current board\;
+  $state\leftarrow$ The current state\;
+  \ForEach{m in legalMoves}{
+    $state\leftarrow$ The state achieved by performing m\;
+    \uIf{state is winning state}{
+      return \emph{move}\;
+    }
+    \uElseIf{state has no legal moves}{
+      return \emph{Null}\;
+    }
+    \Else{
+      return BacktrackingDFS(state)\;
+    }
+
+    }
+ \caption{A standard recursive backtracking using DFS}
+\end{algorithm}
 
 \subsection*{Parallel Algorithm}
 

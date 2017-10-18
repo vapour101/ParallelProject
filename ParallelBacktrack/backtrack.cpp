@@ -13,14 +13,21 @@ list<Move> backtrack::recurse(const Board& state)
 	if (legal.empty())
 		++failed;
 
+/* pragma omp cancel for kinda works like a break, but not exactly.
+ * Requires $ OMP_CANCELLATION=true environment variable
+ * Gives far better than serial performance usually (but not always)
+ * */
+
 #pragma omp parallel for if(parallelise) schedule(dynamic) shared(state) shared(result)
 	for (int i = 0; i < legal.size(); i++)
 	{
 		Board privateState = state;
 		Move move = legal.at(i);
 
-		if ( !result.empty() )
-			continue;
+        if ( !result.empty() ){
+            continue; // Deliberately left as continue
+        }
+
 
 		privateState.executeMove(move);
 
@@ -31,25 +38,36 @@ list<Move> backtrack::recurse(const Board& state)
 
 			if ( result.empty() )
 				result = temp;
+            if (!parallelise)
+                continue;
+            #pragma omp cancel for
 
-			continue;
 		}
 
-		if (isInfeasible(privateState))
-			continue;
+        if (isInfeasible(privateState)){
+            if (!parallelise)
+                continue;
+            #pragma omp cancel for
+        }
 
 		list<Move> childResult = recurse(privateState);
 
 		if ( childResult.empty())
 		{
 			addInfeasible(privateState);
-			continue;
+            if (!parallelise)
+                continue;
+            #pragma omp cancel for
 		}
 
 		childResult.push_front(move);
 
-		if ( result.empty() )
+        if ( result.empty() ){
 			result = childResult;
+            if (!parallelise)
+                continue;
+            #pragma omp cancel for
+        }
 	}
 
 	return result;

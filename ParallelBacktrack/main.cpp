@@ -10,27 +10,29 @@ vector<string> readLinesFromFile(const string& filename);
 
 int main()
 {
-	vector<string> boards = readLinesFromFile("/home/vapour101/Development/Uni/PC/ParallelProject/ParallelBacktrack/initial_states/moves:20");
+      /*vector<string> boards = readLinesFromFile("/home/vapour101/Development/Uni/PC/ParallelProject/ParallelBacktrack/initial_states/moves:20"); */
 
-	for (string board : boards) {
+    vector<string> boards = readLinesFromFile("/home/tau/Documents/Bsc3/Coms3/Parallel Computing/ParallelProject/ParallelBacktrack/initial_states/moves:65");
+
+    for (string board : boards) {
 		Board check{board};
 		backtrack checker(check);
 
-		checker.start();
+        checker.start();
 		checker.printTime(cout);
-		checker.clear();
+        checker.clear();
 
-		checker.setParallel(true);
+        checker.setParallel(true);
 		checker.start();
-		checker.printTime(cout);
+        checker.printTime(cout);
 
 		cout << endl;
 
 		//if (checker.hasSolution())
 		//	checker.printSequence(cout);
-	}
+    }
 
-	/*
+    /*
 	Board check{"..+++....+o+..++ooo+++ooooo+ooooooo..+++....+++.."};
 	backtrack checker(check);
 
@@ -57,7 +59,7 @@ int main()
 	}
 
 	time /= 10;
-	cout << "Parallel: " << time.count() / 1000000 << "ms" << endl;*/
+    cout << "Parallel: " << time.count() / 1000000 << "ms" << endl;*/
 
 	return 0;
 }

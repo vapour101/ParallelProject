@@ -80,6 +80,6 @@ def humanize(file):
             h.write("\n\n")
 
 
-for i in range(10, 25, 5):
+for i in range(25, 110, 10):
     make_states(i, 100)
     humanize('moves:' + str(i))
