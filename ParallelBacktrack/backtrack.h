@@ -5,6 +5,7 @@
 #include <unordered_set>
 #include <ostream>
 #include <chrono>
+#include <atomic>
 
 #include "board.h"
 
@@ -18,6 +19,7 @@ public:
 	std::chrono::nanoseconds getDuration();
 	int getInfeasibleCount() const;
 	int getFailed() const;
+	int getNodes() const;
 	bool hasSolution();
 
 	void print(std::ostream& out);
@@ -34,7 +36,8 @@ private:
 	std::list<Move> recurse(const Board& state);
 
 	const Board initialBoard;
-	int failed;
+	std::atomic<int> failed;
+	std::atomic<int> nodes;
 
 	bool parallelise;
 	bool checked;

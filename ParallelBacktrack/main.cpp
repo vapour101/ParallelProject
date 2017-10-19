@@ -22,6 +22,8 @@ int main(int argc, char* argv[])
 		averageOver = stringToInt(argv[2]);
 	}
 
+	cout << "sequential time, parallel time, solution length, nodes touched, infeasible states counted" << endl;
+
 	string fileName = argv[1];
 	vector<string> boards = readLinesFromFile(fileName);
 
@@ -52,7 +54,9 @@ int main(int argc, char* argv[])
 		sequentialTime /= averageOver;
 		parallelTime /= averageOver;
 
-		cout << sequentialTime.count() << ", " << parallelTime.count() << endl;
+		cout << sequentialTime.count() << ", " << parallelTime.count() << ", ";
+		cout << checker.getSolution().size() << ", " << checker.getNodes() << ", ";
+		cout << checker.getInfeasibleCount() << endl;
 	}
 
 	return 0;
