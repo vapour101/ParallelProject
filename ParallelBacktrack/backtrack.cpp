@@ -36,7 +36,7 @@ list<Move> backtrack::recurse(const Board& state)
 			list<Move> temp{};
 			temp.push_back(move);
 
-			if ( result.empty() )
+            if ( result.empty() )
 				result = temp;
             if (!parallelise)
                 continue;
@@ -64,7 +64,7 @@ list<Move> backtrack::recurse(const Board& state)
 		childResult.push_front(move);
 
         if ( result.empty() ){
-			result = childResult;
+            result = childResult;
             #pragma omp cancel for
         }
 	}

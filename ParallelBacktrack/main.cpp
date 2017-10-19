@@ -12,24 +12,24 @@ int main()
 {
       /*vector<string> boards = readLinesFromFile("/home/vapour101/Development/Uni/PC/ParallelProject/ParallelBacktrack/initial_states/moves:20"); */
 
-    vector<string> boards = readLinesFromFile("/home/tau/Documents/Bsc3/Coms3/Parallel Computing/ParallelProject/ParallelBacktrack/initial_states/moves:65");
+    vector<string> boards = readLinesFromFile("/home/tau/Documents/Bsc3/Coms3/Parallel Computing/ParallelProject/ParallelBacktrack/initial_states/hard");
 
     for (string board : boards) {
 		Board check{board};
 		backtrack checker(check);
 
-        checker.start();
+        /*checker.start();
 		checker.printTime(cout);
-        checker.clear();
+        checker.clear();*/
 
         checker.setParallel(true);
 		checker.start();
-        checker.printTime(cout);
+        checker.print(cout);
 
 		cout << endl;
 
 		//if (checker.hasSolution())
-		//	checker.printSequence(cout);
+        //checker.printSequence(cout);
     }
 
     /*
