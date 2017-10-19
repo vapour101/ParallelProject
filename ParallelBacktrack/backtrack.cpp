@@ -6,6 +6,7 @@ using namespace std;
 
 list<Move> backtrack::recurse(const Board& state)
 {
+	++nodes;
 	list<Move> result;
 
 	vector<Move> legal = state.getLegalMoves();
@@ -72,6 +73,7 @@ backtrack::backtrack(const Board& start) : initialBoard{start}
 	checked = false;
 	solvable = false;
 	failed = 0;
+	nodes = 0;
 }
 
 void backtrack::start()
@@ -113,6 +115,11 @@ int backtrack::getInfeasibleCount() const
 int backtrack::getFailed() const
 {
 	return failed;
+}
+
+int backtrack::getNodes() const
+{
+	return nodes;
 }
 
 bool backtrack::hasSolution()
@@ -184,6 +191,7 @@ void backtrack::clear()
 {
 	checked = false;
 	solvable = false;
+	nodes = 0;
 	solution.clear();
 	infeasibleBoards.clear();
 }
