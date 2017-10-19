@@ -13,20 +13,20 @@ list<Move> backtrack::recurse(const Board& state)
 	if (legal.empty())
 		++failed;
 
-/* pragma omp cancel for kinda works like a break, but not exactly.
- * Requires $ OMP_CANCELLATION=true environment variable
- * Gives far better than serial performance usually (but not always)
- * */
-
+	/*
+	 * pragma omp cancel for kinda works like a break, but not exactly.
+	 * Requires $ OMP_CANCELLATION=true environment variable
+	 * Gives far better than serial performance usually (but not always)
+	 */
 #pragma omp parallel for if(parallelise) schedule(dynamic) shared(state) shared(result)
 	for (int i = 0; i < legal.size(); i++)
 	{
 		Board privateState = state;
 		Move move = legal.at(i);
 
-        if ( !result.empty() ){
-            continue; // Deliberately left as continue
-        }
+		if ( !result.empty() ){
+			continue;
+		}
 
 
 		privateState.executeMove(move);
@@ -38,35 +38,29 @@ list<Move> backtrack::recurse(const Board& state)
 
 			if ( result.empty() )
 				result = temp;
-            if (!parallelise)
-                continue;
-            #pragma omp cancel for
-
+			if (!parallelise)
+				continue;
+#pragma omp cancel for
 		}
 
-        if (isInfeasible(privateState)){
-            if (!parallelise)
-                continue;
-            #pragma omp cancel for
-        }
+		if (isInfeasible(privateState)){
+			continue;
+		}
 
 		list<Move> childResult = recurse(privateState);
 
 		if ( childResult.empty())
 		{
 			addInfeasible(privateState);
-            if (!parallelise)
-                continue;
-            #pragma omp cancel for
-
+			continue;
 		}
 
 		childResult.push_front(move);
 
-        if ( result.empty() ){
+		if ( result.empty() ){
 			result = childResult;
-            #pragma omp cancel for
-        }
+#pragma omp cancel for
+		}
 	}
 
 	return result;
@@ -83,9 +77,6 @@ backtrack::backtrack(const Board& start) : initialBoard{start}
 void backtrack::start()
 {
 	chrono::high_resolution_clock::time_point start, stop;
-
-	//omp_set_nested(true);
-	//omp_set_max_active_levels(threadingDepth);
 
 	checked = true;
 
@@ -176,7 +167,7 @@ void backtrack::printSequence(ostream& out)
 void backtrack::printTime(ostream& out)
 {
 	out << (isParallel() ? "Parallel Time:\t\t" : "Sequential Time:\t");
-	out << getDuration().count() << "ns" << endl;
+	out << getDuration().count() / 1000000 << "ms" << endl;
 }
 
 void backtrack::setParallel(bool parallel)

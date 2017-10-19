@@ -1,65 +1,59 @@
 #include <iostream>
 #include <unordered_set>
 #include <fstream>
+#include <sstream>
 #include "board.h"
 #include "backtrack.h"
 
 using namespace std;
 
 vector<string> readLinesFromFile(const string& filename);
+int stringToInt(const string& str);
 
-int main()
+int main(int argc, char* argv[])
 {
-      /*vector<string> boards = readLinesFromFile("/home/vapour101/Development/Uni/PC/ParallelProject/ParallelBacktrack/initial_states/moves:20"); */
+	int averageOver = 10;
 
-    vector<string> boards = readLinesFromFile("/home/tau/Documents/Bsc3/Coms3/Parallel Computing/ParallelProject/ParallelBacktrack/initial_states/moves:65");
+	if (argc < 2)
+		return 0;
 
-    for (string board : boards) {
+	if (argc >= 3)
+	{
+		averageOver = stringToInt(argv[2]);
+	}
+
+	string fileName = argv[1];
+	vector<string> boards = readLinesFromFile(fileName);
+
+	for (string board : boards)
+	{
 		Board check{board};
-		backtrack checker(check);
+		backtrack checker{check};
 
-        checker.start();
-		checker.printTime(cout);
-        checker.clear();
+		chrono::nanoseconds sequentialTime = chrono::nanoseconds::zero();
+		chrono::nanoseconds parallelTime = chrono::nanoseconds::zero();
 
-        checker.setParallel(true);
-		checker.start();
-        checker.printTime(cout);
+		for (int i = 0; i < averageOver; ++i)
+		{
+			checker.clear();
+			checker.start();
+			sequentialTime += checker.getDuration();
+		}
 
-		cout << endl;
+		checker.setParallel(true);
 
-		//if (checker.hasSolution())
-		//	checker.printSequence(cout);
-    }
+		for (int i = 0; i < averageOver; ++i)
+		{
+			checker.clear();
+			checker.start();
+			parallelTime += checker.getDuration();
+		}
 
-    /*
-	Board check{"..+++....+o+..++ooo+++ooooo+ooooooo..+++....+++.."};
-	backtrack checker(check);
+		sequentialTime /= averageOver;
+		parallelTime /= averageOver;
 
-	chrono::nanoseconds time = chrono::nanoseconds::zero();
-
-	for (int i = 0; i < 10; i++)
-	{
-		checker.clear();
-		checker.start();
-		time += checker.getDuration();
+		cout << sequentialTime.count() << ", " << parallelTime.count() << endl;
 	}
-
-	time /= 10;
-	cout << "Sequential: " << time.count() / 1000000 << "ms" << endl;
-	checker.setParallel(true);
-
-	time = chrono::nanoseconds::zero();
-
-	for (int i = 0; i < 10; i++)
-	{
-		checker.clear();
-		checker.start();
-		time += checker.getDuration();
-	}
-
-	time /= 10;
-    cout << "Parallel: " << time.count() / 1000000 << "ms" << endl;*/
 
 	return 0;
 }
@@ -83,4 +77,12 @@ vector<string> readLinesFromFile(const string& filename)
 	file.close();
 
 	return lines;
+}
+
+int stringToInt(const string& str)
+{
+	istringstream stream{str};
+	int out;
+	stream >> out;
+	return out;
 }
