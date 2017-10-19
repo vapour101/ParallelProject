@@ -30,3 +30,13 @@
 *.exe
 *.out
 *.app
+
+build-ParallelBacktrack-Desktop-Debug/
+
+ParallelBacktrack/\.idea/
+
+ParallelBacktrack/ParallelBacktrack\.pro\.user\.b25c6b9
+
+*.aux
+
+*.log

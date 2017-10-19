@@ -1,2 +1,3 @@
 Data averaged over 10 runs.
+sequential time, parallel time, solution length, nodes touched, infeasible states counted
 Time given in nanoseconds.

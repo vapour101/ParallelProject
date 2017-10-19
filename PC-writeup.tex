@@ -117,7 +117,7 @@ The game of peg solitaire is a one player game played on a 33 holed cross shaped
 \end{figure}
 \pagebreak
 \section*{Backtracking Search}
-Recursive backtracking using depth first search was chosen as the method for state space exploration. The standard depth first algorithm is as follows:
+Recursive backtracking using depth first search was chosen as the method for state space exploration. The standard backtracking depth first algorithm is as follows: %Vincent TODO
 \begin{algorithm}[ht]
   \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
   \Input{An initial, valid board state}
@@ -141,7 +141,7 @@ Recursive backtracking using depth first search was chosen as the method for sta
  \caption{A standard recursive backtracking using DFS}
 \end{algorithm}
 
-But because pegs are identical, game states where pegs are in the same position are identical, regardless of the moves taken to arrive at that state. Thus exploring the state space looking for a sequence of states leading to the winning state will probably involve evaluating the same states many times as illustrated below.
+But because pegs are indifferentiable, game states where pegs are in the same position are identical, regardless of the moves taken to arrive at that state. Thus exploring the state space looking for a sequence of states leading to the winning state will probably involve evaluating the same states many times. Thus a significant speed up can be achieved by saving states that are known to not lead to the winning state. 
 
 
 
