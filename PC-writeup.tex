@@ -118,32 +118,105 @@ The game of peg solitaire is a one player game played on a 33 holed cross shaped
 \pagebreak
 \section*{Backtracking Search}
 Recursive backtracking using depth first search was chosen as the method for state space exploration. The standard backtracking depth first algorithm is as follows: %Vincent TODO
-\begin{algorithm}[ht]
-  \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
-  \Input{An initial, valid board state}
-  \Output{A sequence of moves to get from the initial state to the winning state}
-  \BlankLine
-  $result\leftarrow$ Empty list to store moves from the initial state to the winning state
-  $legalMoves\leftarrow$ A list of all the legal moves for the current board\;
-  $state\leftarrow$ The current state\;
-  \ForEach{m in legalMoves}{
-    $state\leftarrow$ The state achieved by performing m\;
-    \uIf{state is winning state}{
-      return \emph{move}\;
-    }
-    \uElseIf{state has no legal moves}{
-      return \emph{Null}\;
-    }
-    \Else{
-      return BacktrackingDFS(state)\;
-    }
-  }
- \caption{A standard recursive backtracking using DFS}
+
+\begin{algorithm}[H]
+	\DontPrintSemicolon
+	\SetKwInOut{Input}{input}
+	\SetKwInOut{Output}{output}
+	\SetKwData{Result}{result}
+	\SetKwData{State}{state}
+	\SetKwData{Initial}{initialState}
+	\SetKwData{Legal}{legalMoves}
+	\SetKwData{Move}{move}
+	\SetKwData{Child}{childResult}
+	\SetKw{Break}{break}
+	\SetKw{Continue}{continue}
+	\SetKwFunction{Backtrack}{backtrack}
+	\SetKwProg{Fn}{Function}{}{}
+	\Fn{\Backtrack}{
+		\Input{An initial, possibly un-winnable, board state.} %We can't restrict ourselves to valid states, or we wouldn't be able to recurse.
+		\Output{A sequence of moves to get from the initial state to the winning state, if a winning state 
+			cannot be reached the sequence should be empty.}
+		\BlankLine
+		\Initial$\leftarrow$ The initial state\;
+		\Legal$\leftarrow$ A list of all the legal moves for \Initial\;
+		\Result$\leftarrow$ Empty list to store moves from the initial state to the winning state\;
+		\ForEach{\Move in \Legal}{
+			\State$\leftarrow$ The state after playing \Move on \Initial\;
+			\If{\State is a winning state}{
+				\Result$\leftarrow$ \Move\;
+				\Break\;
+			}
+			\BlankLine
+			\Child$\leftarrow$ \Backtrack{\State}\;
+			\BlankLine
+			\If{\Child is not empty}{
+				Prepend \Move to \Child\;
+				\Result$\leftarrow$ \Child\;
+				\Break\;
+			}
+		}
+		\BlankLine
+		\Return{\Result}\;
+	}
+	\caption{A standard recursive backtracking using DFS}
 \end{algorithm}
 
-But because pegs are indifferentiable, game states where pegs are in the same position are identical, regardless of the moves taken to arrive at that state. Thus exploring the state space looking for a sequence of states leading to the winning state will probably involve evaluating the same states many times. Thus a significant speed up can be achieved by saving states that are known to not lead to the winning state.
+But because pegs are indistinguishable, game states where pegs are in the same position are identical, regardless of the moves taken to arrive at that state. Thus exploring the state space looking for a sequence of states leading to the winning state will probably involve evaluating the same states many times. Thus a significant speed up can be achieved by saving states that are known to not lead to the winning state as in the following algorithm:
 
-
+\begin{algorithm}[H]
+	\DontPrintSemicolon
+	\SetKwInOut{Input}{input}
+	\SetKwInOut{Output}{output}
+	\SetKwData{Result}{result}
+	\SetKwData{State}{state}
+	\SetKwData{Initial}{initialState}
+	\SetKwData{Legal}{legalMoves}
+	\SetKwData{Move}{move}
+	\SetKwData{Child}{childResult}
+	\SetKwData{Dataset}{infeasibleSet}
+	\SetKw{Break}{break}
+	\SetKw{Continue}{continue}
+	\SetKwFunction{Backtrack}{dynamicBacktrack}
+	\SetKwProg{Fn}{Function}{}{}
+	\Fn{\Backtrack}{
+		\Input{An initial, possibly un-winnable, board state.}
+		\Input{A set of all states that have been searched and are known to be un-winnable.}
+		\Output{A sequence of moves to get from the initial state to the winning state, if a winning state 
+			cannot be reached the sequence should be empty.}
+		\BlankLine
+		\Initial$\leftarrow$ The initial state\;
+		\Dataset$\leftarrow$ The set of un-winnable states\;
+		\Legal$\leftarrow$ A list of all the legal moves for \Initial\;
+		\Result$\leftarrow$ Empty list to store moves from the initial state to the winning state\;
+		\ForEach{\Move in \Legal}{
+			\State$\leftarrow$ The state after playing \Move on \Initial\;
+			\BlankLine
+			\If{\State is in \Dataset}{
+				\Continue\;
+			}
+			\BlankLine
+			\If{\State is a winning state}{
+				\Result$\leftarrow$ \Move\;
+				\Break\;
+			}
+			\BlankLine
+			\Child$\leftarrow$ \Backtrack{\State, \Dataset}\;
+			\BlankLine
+			\uIf{\Child is not empty}{
+				Prepend \Move to \Child\;
+				\Result$\leftarrow$ \Child\;
+				\Break\;
+			}
+			\Else{
+				Add \State to \Dataset\;
+			}
+		}
+		\BlankLine
+		\Return{\Result}\;
+	}
+	\caption{Recursive backtracking using DFS and dynamic programming methods}
+\end{algorithm}
 
 \subsection*{Serial Implementation}
 
