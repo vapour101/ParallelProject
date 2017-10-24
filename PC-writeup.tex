@@ -220,11 +220,11 @@ But because pegs are indistinguishable, game states where pegs are in the same p
 \end{algorithm}
 
 \subsection*{Parallel Implementation}
-To parallelise the above algorithms it was decided to make use of the openmp parallel for loop to allow the concurrent depth first exploration of multiple moves from the initial state. The openmp parallel for loop partitions the iteration space of the loop at \autoref{loop} of Algorithm~\autoref{dyn-alg}.
+To parallelise the above algorithms it was decided to make use of the OpenMP parallel for loop to allow the concurrent depth first exploration of multiple moves from the initial state. The OpenMP parallel for loop partitions the iteration space of the loop at \autoref{loop} of Algorithm~\autoref{dyn-alg}.
 
-Static, dynamic and guided openmp load balancing constructs were all tried, but dynamic gave by far the best performance. This is because dynamic (with default chunk size) gives one element of the iteration space to a thread at a time, allocating new tasks to threads as they finish their allocated task in a round robin approach. This gives good load balancing in this particular problem since some elements of the iteration space may require exploring the game graph very deeply while others may quickly lead to previously seen infeasible states.
+Static, dynamic and guided OpenMP load balancing constructs were all tried, but dynamic gave by far the best performance. This is because dynamic (with default chunk size) gives one element of the iteration space to a thread at a time, allocating new tasks to threads as they finish their allocated task in a round robin approach. This gives good load balancing in this particular problem since some elements of the iteration space may require exploring the game graph very deeply while others may quickly lead to previously seen infeasible states.
 
-The infeasible set is an instance variable of the object and as such each thread can concurrently reference it. Simultaneously, concurrent threads writing to the infeasible set need to avoid data races. Thus the function to add a state to the infeasible set must be an openmp critical region.
+The infeasible set is an instance variable of the object and as such each thread can concurrently reference it. Simultaneously, concurrent threads writing to the infeasible set need to avoid data races, thus the function to add a state to the infeasible set must be an OpenMP critical region.
 
 Nested parallelism was also tried and was found to be highly inefficient. Further various upper limits on the depth with which nested parallelism could take place wee tried but the added overhead of parallelism within the recursive algorithm remained slower than no nested parallelism at all.
 
