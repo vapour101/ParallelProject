@@ -22,8 +22,9 @@ def cheat(infile='full_sorted'):
             better.append(row)
     better_matrix = np.array(better)
 
-    with open('better_data', 'wb') as f:
+    with open('better_data2', 'wb') as f:
         np.savetxt(f, better_matrix, delimiter=',', fmt='%.5f')
+
 
 join_data()
 
