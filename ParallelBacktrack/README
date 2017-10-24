@@ -1,0 +1,6 @@
+To build:
+	make
+
+To run:
+	make <filepath>
+	e.g. make demo
