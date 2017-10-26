@@ -27,6 +27,8 @@ enum Direction {
 typedef std::pair<int, int> Coord;
 typedef std::pair<Coord, Direction> Move;
 
+Coord transformCoord(const Coord& in, int angle);
+
 class Board
 {
 public:
@@ -38,8 +40,10 @@ public:
 	bool isLegal(Move) const;
 	void executeMove(Move);
 	std::string toString() const;
+	std::vector<std::string> toImageStrings() const;
 	bool isInvalid() const;
 	std::vector<Move> getLegalMoves() const;
+	std::vector<size_t> getImageHashes() const;
 
 private:
 	std::unordered_set<Coord, PairHash> pegs;

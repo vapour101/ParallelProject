@@ -108,7 +108,12 @@ string Board::toString() const
 		out += "\n";
 	}
 
-    return out;
+	return out;
+}
+
+std::vector<string> Board::toImageStrings() const
+{
+
 }
 
 bool Board::isInvalid() const
@@ -141,6 +146,11 @@ std::vector<Move> Board::getLegalMoves() const
 
 
 	return res;
+}
+
+std::vector<size_t> Board::getImageHashes() const
+{
+
 }
 
 Coord Board::getPosition(Move move) const
@@ -247,4 +257,44 @@ void printDirection(ostream& out, Direction direction)
 void printCoords(ostream& out, Coord coord)
 {
 	out << "(" << coord.first << ", " << coord.second << ")";
+}
+
+Coord transformCoord(const Coord& in, int angle)
+{
+	angle %= 8;
+
+	int x = in.first;
+	int y = in.second;
+
+	switch (angle)
+	{
+	case 0: //reflect over x
+		y = 6 - y;
+		break;
+	case 1: //reflect over y
+		x = 6 - x;
+		break;
+	case 2: //reflect over y = x
+
+		break;
+	case 3: //reflect over y = -x
+
+		break;
+	case 4:
+
+		break;
+	case 5:
+
+		break;
+	case 6:
+
+		break;
+	case 7:
+
+		break;
+	}
+
+	return make_pair(x, y);
+
+
 }

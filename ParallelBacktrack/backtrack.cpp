@@ -1,5 +1,4 @@
 #include "backtrack.h"
-#include <omp.h>
 #include <iostream>
 
 using namespace std;
@@ -14,7 +13,6 @@ list<Move> backtrack::recurse(const Board& state)
 	if (legal.empty())
 		++failed;
 
-#pragma omp parallel for if(parallelise) schedule(dynamic) shared(state) shared(result)
 	for (int i = 0; i < legal.size(); i++)
 	{
 		Board privateState = state;
@@ -197,9 +195,7 @@ bool backtrack::isInfeasible(const Board& check)
 void backtrack::addInfeasible(const Board& board)
 {
 	size_t hash = BoardHash()(board);
-#pragma omp critical
-	{
-		infeasibleBoards.insert(hash);
-	}
+
+	infeasibleBoards.insert(hash);
 }
 
