@@ -19,9 +19,8 @@ def plot_better():
     y=2000*np.exp(0.6*x)
     plt.semilogy(a[:, 1], a[:, 0], 'r+', label="Serial")
     plt.semilogy(x,y)
-    plt.xlabel("Nodes searched")
+    plt.xlabel("Solution length")
     plt.ylabel("Time (nanoseconds)")
-    plt.legend(loc='upper left')
     plt.savefig("better_graph")
 
 plot_better()
