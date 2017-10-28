@@ -11,6 +11,3 @@ HEADERS += \
     board.h \
     backtrack.h
 
-QMAKE_CXXFLAGS+= -fopenmp
-QMAKE_LFLAGS +=  -fopenmp
-
