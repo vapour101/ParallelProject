@@ -16,7 +16,7 @@ def plot_all(filestring="data:*"):
 def plot_better():
     a=np.loadtxt("full_sorted", delimiter=',')
     plt.semilogy(a[:, 1], a[:, 0], 'r+', label="Serial")
-    plt.xlabel("Number of game states touched")
+    plt.xlabel("Solution length")
     plt.ylabel("Time (nanoseconds)")
     plt.legend(loc='upper left')
     plt.savefig("better_graph")
