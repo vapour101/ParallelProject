@@ -1,7 +1,14 @@
 #include "board.h"
 #include "cmath"
+#include <vector>
 
 using namespace std;
+
+ostream& operator<<(ostream& out, const Board& board)
+{
+	out << board.toHumanString();
+	return out;
+}
 
 Board::Board()
 {
@@ -105,27 +112,51 @@ string Board::toString() const
 			else
 				out += ".";
 		}
-		out += "\n";
 	}
 
 	return out;
 }
 
-std::vector<string> Board::toImageStrings() const
+vector<string> Board::toImageStrings() const
 {
+	vector<string> out = {"", "", "", "", "", "", "", ""};
 
+	for (int j = 6; j >= 0; j--)
+	{
+		for (int i = 0; i < 7; i++)
+		{
+			Coord coord = make_pair(i, j);
+
+			for (int k = 0; k < 8; k++)
+			{
+				Coord transCoord = transformCoord(coord, k);
+
+				if (withinBounds(transCoord))
+				{
+					if (isOccupied(transCoord))
+						out[k] += "o";
+					else
+						out[k] += "+";
+				}
+				else
+					out[k] += ".";
+			}
+		}
+	}
+
+	return out;
 }
 
 bool Board::isInvalid() const
 {
-    for (const auto& coord: pegs){
-        for (int i=0; i<=3; i++){
-            Move move=std::make_pair(coord, (Direction) i);
-            if (isLegal(move)){
-                return false;
-            }
-        }
-    }
+	for (const auto& coord: pegs){
+		for (int i=0; i<=3; i++){
+			Move move=std::make_pair(coord, (Direction) i);
+			if (isLegal(move)){
+				return false;
+			}
+		}
+	}
 	return true;
 }
 
@@ -150,7 +181,12 @@ std::vector<Move> Board::getLegalMoves() const
 
 std::vector<size_t> Board::getImageHashes() const
 {
+	vector<size_t> out;
 
+	for (string board : toImageStrings())
+		out.push_back(hash<string>()(board));
+
+	return out;
 }
 
 Coord Board::getPosition(Move move) const
@@ -227,6 +263,32 @@ Coord Board::getJumped(Move move) const
 	return start;
 }
 
+string Board::toHumanString() const
+{
+	string out = "";
+
+	for (int j = 6; j >= 0; j--)
+	{
+		for (int i = 0; i < 7; i++)
+		{
+			Coord coord = make_pair(i, j);
+			if (withinBounds(coord))
+			{
+				if (isOccupied(coord))
+					out += "o";
+				else
+					out += "+";
+			}
+			else
+				out += ".";
+		}
+
+		out += "\n";
+	}
+
+	return out;
+}
+
 
 void printMove(ostream& out, Move move)
 {
@@ -241,16 +303,16 @@ void printDirection(ostream& out, Direction direction)
 	switch (direction) {
 	case NORTH:
 		out << "NORTH";
-	break;
+		break;
 	case SOUTH:
 		out << "SOUTH";
-	break;
+		break;
 	case WEST:
 		out << "WEST";
-	break;
+		break;
 	case EAST:
 		out << "EAST";
-	break;
+		break;
 	}
 }
 
@@ -266,32 +328,20 @@ Coord transformCoord(const Coord& in, int angle)
 	int x = in.first;
 	int y = in.second;
 
-	switch (angle)
-	{
-	case 0: //reflect over x
-		y = 6 - y;
-		break;
-	case 1: //reflect over y
+	if ( angle & 1 ) //flip
 		x = 6 - x;
-		break;
-	case 2: //reflect over y = x
 
-		break;
-	case 3: //reflect over y = -x
+	if ( angle & 2 ) //rotate 90*
+	{
+		int temp = x;
+		x = 6 - y;
+		y = temp;
+	}
 
-		break;
-	case 4:
-
-		break;
-	case 5:
-
-		break;
-	case 6:
-
-		break;
-	case 7:
-
-		break;
+	if ( angle & 4 ) //rotate 180*
+	{
+		x = 6 - x;
+		y = 6 - y;
 	}
 
 	return make_pair(x, y);

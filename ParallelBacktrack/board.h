@@ -52,8 +52,10 @@ private:
 	bool isOccupied(Coord) const;
 	bool captures(Move) const;
 	Coord getJumped(Move) const;
+	std::string toHumanString() const;
 
 	friend struct BoardHash;
+	friend std::ostream& operator<<(std::ostream& out, const Board& board);
 };
 
 

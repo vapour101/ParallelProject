@@ -3,70 +3,61 @@
 
 using namespace std;
 
-list<Move> backtrack::recurse(const Board& state)
+BackTrack::BoardSequence BackTrack::BoardSequence::NullSequence;
+
+BackTrack::MoveSequence BackTrack::recurse(const Board& state)
 {
-	++nodes;
-	list<Move> result;
+	nodes++;
 
 	vector<Move> legal = state.getLegalMoves();
 
 	if (legal.empty())
-		++failed;
+		failed++;
 
-	for (int i = 0; i < legal.size(); i++)
+	for (Move  move : legal)
 	{
 		Board privateState = state;
-		Move move = legal.at(i);
-
-		if ( !result.empty() ){
-			continue;
-		}
-
-
 		privateState.executeMove(move);
+
+		if (isInfeasible(privateState))
+			continue;
 
 		if ( privateState.isFinal() )
 		{
-			list<Move> temp{};
-			temp.push_back(move);
-
-			if ( result.empty() )
-				result = temp;
-			continue;
+			MoveSequence result;
+			result.push_front(move);
+			return result;
 		}
 
-		if (isInfeasible(privateState)){
-			continue;
-		}
+		MoveSequence childResult = recurse(privateState);
 
-		list<Move> childResult = recurse(privateState);
-
-		if ( childResult.empty())
+		if ( !childResult.empty())
 		{
-			addInfeasible(privateState);
-			continue;
+			childResult.push_front(move);
+			return childResult;
 		}
 
-		childResult.push_front(move);
-
-		if ( result.empty() ){
-			result = childResult;
-		}
+		addInfeasible(privateState);
 	}
 
-	return result;
+	return MoveSequence();
 }
 
-backtrack::backtrack(const Board& start) : initialBoard{start}
+ostream& operator<<(ostream& out, const BackTrack& solver)
 {
-	parallelise = false;
+	solver.printToStream(out);
+	return out;
+}
+
+BackTrack::BackTrack(const Board& start) : initialBoard{start}
+{
 	checked = false;
 	solvable = false;
 	failed = 0;
 	nodes = 0;
 }
 
-void backtrack::start()
+void BackTrack::start()
 {
 	chrono::high_resolution_clock::time_point start, stop;
 
@@ -81,48 +72,56 @@ void backtrack::start()
 	solvable = !solution.empty();
 }
 
-list<Move> backtrack::getSolution()
+BackTrack::BoardSequence BackTrack::getBoardSequence() const
 {
-	if ( !checked )
-		start();
+	if ( !hasSolution() )
+		return BoardSequence::NullSequence;
 
+	return BoardSequence(*this);
+}
+
+BackTrack::MoveSequence BackTrack::getMoveSequence() const
+{
 	return solution;
 }
 
-chrono::nanoseconds backtrack::getDuration()
+BackTrack::SolutionTime BackTrack::getDuration() const
 {
-	if (!checked)
-		start();
+	if ( !checked )
+		return SolutionTime::max();
 
 	return duration;
 }
 
-int backtrack::getInfeasibleCount() const
+int BackTrack::getInfeasibleCount() const
 {
 	return infeasibleBoards.size();
 }
 
-int backtrack::getFailed() const
+int BackTrack::getFailed() const
 {
 	return failed;
 }
 
-int backtrack::getNodes() const
+int BackTrack::getNodes() const
 {
 	return nodes;
 }
 
-bool backtrack::hasSolution()
+bool BackTrack::hasSolution() const
 {
-	if ( !checked )
-		start();
-
 	return solvable;
 }
 
-void backtrack::print(ostream& out)
+void BackTrack::printToStream(ostream& out) const
 {
-	out << initialBoard.toString() << endl;
+	out << initialBoard << endl;
+
+	if ( !checked )
+	{
+		out << "Solution not started." << endl;
+		return;
+	}
 
 	if (!hasSolution())
 	{
@@ -130,54 +129,28 @@ void backtrack::print(ostream& out)
 		return;
 	}
 
-	out << "Solution found in " << getDuration().count() / 1000000 << "ms." << endl;
-	out << "Solution method: " << (isParallel() ? "Parallel" : "Sequential") << endl;
+	out << "Solution found in " << getDuration() << endl;
 	out << "Checked dead states: " << getFailed() << endl;
 	out << "Infeasible states found: " << getInfeasibleCount() << endl;
-	out << "Length: " << getSolution().size() << " moves." << endl;
-	out << "Solution:" << endl;
-
-	for (Move move : getSolution())
-	{
-		out << "\t";
-		printMove(out, move);
-		out << endl;
-	}
+	out << "Length: " << getMoveSequence().size() << " moves." << endl;
+	out << getMoveSequence() << endl;
 }
 
-void backtrack::printSequence(ostream& out)
+void BackTrack::printSequence(ostream& out) const
 {
 	if (!hasSolution())
 		return;
 
-	Board board = initialBoard;
-
-	out << board.toString() << endl;
-
-	for (Move move : getSolution())
-	{
-		board.executeMove(move);
-		out << board.toString() << endl;
-	}
+	out << getBoardSequence() << endl;
 }
 
-void backtrack::printTime(ostream& out)
+void BackTrack::printTime(ostream& out) const
 {
-	out << (isParallel() ? "Parallel Time:\t\t" : "Sequential Time:\t");
+	out << "Time:\t\t";
 	out << getDuration().count() / 1000000 << "ms" << endl;
 }
 
-void backtrack::setParallel(bool parallel)
-{
-	parallelise = parallel;
-}
-
-bool backtrack::isParallel() const
-{
-	return parallelise;
-}
-
-void backtrack::clear()
+void BackTrack::clear()
 {
 	checked = false;
 	solvable = false;
@@ -186,16 +159,58 @@ void backtrack::clear()
 	infeasibleBoards.clear();
 }
 
-bool backtrack::isInfeasible(const Board& check)
+bool BackTrack::isInfeasible(const Board& check)
 {
-	size_t hash = BoardHash()(check);
-	return infeasibleBoards.count(hash);
+	string boardString = check.toString();
+	return infeasibleBoards.count(boardString);
 }
 
-void backtrack::addInfeasible(const Board& board)
+void BackTrack::addInfeasible(const Board& board)
 {
-	size_t hash = BoardHash()(board);
-
-	infeasibleBoards.insert(hash);
+	for (string boardString : board.toImageStrings())
+		infeasibleBoards.insert(boardString);
 }
 
+
+ostream& operator<<(ostream& out, const BackTrack::SolutionTime& duration)
+{
+	out << duration.count() / 1000000 << "ms";
+	return out;
+}
+
+ostream& operator<<(ostream& out, const BackTrack::BoardSequence& solution)
+{
+	if (solution.isNullSequence)
+		return out;
+
+	Board board = solution.initialBoard;
+	out << board << endl;
+
+	for (Move move : solution.sequence)
+	{
+		board.executeMove(move);
+		out << board << endl;
+	}
+
+	return out;
+}
+
+BackTrack::BoardSequence::BoardSequence(const BackTrack& solver) : isNullSequence{false}, initialBoard{solver.initialBoard}, sequence{solver.solution}
+{
+}
+
+BackTrack::BoardSequence::BoardSequence() : isNullSequence{true}
+{
+}
+
+ostream& operator<<(ostream& out, const BackTrack::MoveSequence& sequence)
+{
+	out << "Move Sequence:" << endl;
+	for (Move move : sequence)
+	{
+		out << "\t";
+		printMove(out, move);
+	}
+
+	return out;
+}

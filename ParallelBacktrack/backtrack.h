@@ -5,47 +5,73 @@
 #include <unordered_set>
 #include <ostream>
 #include <chrono>
-#include <atomic>
 
 #include "board.h"
 
-class backtrack
+class BackTrack
 {
 public:
-	backtrack(const Board& start);
+	class BoardSequence; //forward declaration
+	typedef std::chrono::nanoseconds SolutionTime;
+	typedef std::list<Move> MoveSequence;
+
+	BackTrack(const Board& start);
 
 	void start();
-	std::list<Move> getSolution();
-	std::chrono::nanoseconds getDuration();
+	void clear();
+
+	bool hasSolution() const;
+
+	BoardSequence getBoardSequence() const;
+	MoveSequence getMoveSequence() const;
+	SolutionTime getDuration() const;
 	int getInfeasibleCount() const;
 	int getFailed() const;
 	int getNodes() const;
-	bool hasSolution();
 
-	void print(std::ostream& out);
-	void printSequence(std::ostream& out);
-	void printTime(std::ostream& out);
 
-	void setParallel(bool parallel);
-	bool isParallel() const;
-	void clear();
+	void printSequence(std::ostream& out) const;
+	void printTime(std::ostream& out) const;
 
 private:
+	void printToStream(std::ostream& out) const;
 	bool isInfeasible(const Board& check);
 	void addInfeasible(const Board& board);
-	std::list<Move> recurse(const Board& state);
+	MoveSequence recurse(const Board& state);
 
 	const Board initialBoard;
-	std::atomic<int> failed;
-	std::atomic<int> nodes;
+	int failed;
+	int nodes;
 
-	bool parallelise;
 	bool checked;
 	bool solvable;
-	std::list<Move> solution;
+	MoveSequence solution;
 
-	std::unordered_set<std::size_t> infeasibleBoards;
-	std::chrono::nanoseconds duration;
+	std::unordered_set<std::string> infeasibleBoards;
+	SolutionTime duration;
+
+	friend std::ostream& operator<<(std::ostream& out, const BackTrack& solver);
+
+public:
+	class BoardSequence {
+	public:
+		BoardSequence(const BackTrack& solver);
+
+		const bool isNullSequence;
+
+		static BoardSequence NullSequence;
+
+		friend std::ostream& operator<<(std::ostream& out, const BoardSequence& sequence);
+
+	private:
+		BoardSequence();
+		const Board initialBoard;
+		const std::list<Move> sequence;
+	};
 };
+
+std::ostream& operator<<(std::ostream& out, const BackTrack::SolutionTime& duration);
+std::ostream& operator<<(std::ostream& out, const BackTrack::MoveSequence& sequence);
+
 
 #endif // BACKTRACK_H

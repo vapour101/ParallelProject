@@ -12,6 +12,7 @@ int stringToInt(const string& str);
 
 int main(int argc, char* argv[])
 {
+	/*
 	int averageOver = 1;
 
 	if (argc < 2)
@@ -41,7 +42,7 @@ int main(int argc, char* argv[])
 
 		cout << "*************" << endl;
 
-		/*chrono::nanoseconds sequentialTime = chrono::nanoseconds::zero();
+		chrono::nanoseconds sequentialTime = chrono::nanoseconds::zero();
 		chrono::nanoseconds parallelTime = chrono::nanoseconds::zero();
 
 		for (int i = 0; i < averageOver; ++i)
@@ -65,8 +66,14 @@ int main(int argc, char* argv[])
 
 		cout << sequentialTime.count() << ", " << parallelTime.count() << ", ";
 		cout << checker.getSolution().size() << ", " << checker.getNodes() << ", ";
-		cout << checker.getInfeasibleCount() << endl;*/
-	}
+		cout << checker.getInfeasibleCount() << endl;
+	}*/
+
+	Board board {"..+++....+o+..++ooo+++ooooo+ooooooo..+++....+++.."};
+	BackTrack solver{board};
+
+	solver.start();
+	cout << solver << solver.getBoardSequence();
 
 	return 0;
 }
