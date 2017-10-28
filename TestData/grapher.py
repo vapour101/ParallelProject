@@ -15,8 +15,11 @@ def plot_all(filestring="data:*"):
 
 def plot_better():
     a=np.loadtxt("full_sorted", delimiter=',')
+    x=np.arange(2, 26, 1)
+    y=2000*np.exp(0.6*x)
     plt.semilogy(a[:, 1], a[:, 0], 'r+', label="Serial")
-    plt.xlabel("Solution length")
+    plt.semilogy(x,y)
+    plt.xlabel("Nodes searched")
     plt.ylabel("Time (nanoseconds)")
     plt.legend(loc='upper left')
     plt.savefig("better_graph")
