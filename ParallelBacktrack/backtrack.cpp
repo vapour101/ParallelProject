@@ -169,8 +169,7 @@ bool BackTrack::isInfeasible(const Board& check)
 
 void BackTrack::addInfeasible(const Board& board)
 {
-	for (string boardString : board.toImageStrings())
-		infeasibleBoards.insert(boardString);
+	infeasibleBoards.insert(board.toString());
 }
 
 
