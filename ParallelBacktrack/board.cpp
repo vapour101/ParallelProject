@@ -1,6 +1,7 @@
 #include "board.h"
 #include "cmath"
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -174,7 +175,6 @@ std::vector<Move> Board::getLegalMoves() const
 			}
 		}
 	}
-
 
 	return res;
 }

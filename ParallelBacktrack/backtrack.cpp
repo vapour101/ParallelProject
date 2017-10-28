@@ -1,5 +1,6 @@
 #include "backtrack.h"
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
 
@@ -13,6 +14,9 @@ BackTrack::MoveSequence BackTrack::recurse(const Board& state)
 
 	if (legal.empty())
 		failed++;
+
+	if (legal.size() > 5)
+		random_shuffle(legal.begin(), legal.end());
 
 	for (Move  move : legal)
 	{
@@ -61,14 +65,12 @@ void BackTrack::start()
 {
 	chrono::high_resolution_clock::time_point start, stop;
 
-	checked = true;
-
 	start = chrono::high_resolution_clock::now();
 	solution = recurse(initialBoard);
 	stop = chrono::high_resolution_clock::now();
 
 	duration = stop - start;
-
+	checked = true;
 	solvable = !solution.empty();
 }
 

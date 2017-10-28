@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
 		cout << checker.getInfeasibleCount() << endl;
 	}*/
 
-	Board board {"..+++....+o+..++ooo+++ooooo+ooooooo..+++....+++.."};
+	Board board;
 	BackTrack solver{board};
 
 	solver.start();
