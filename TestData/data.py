@@ -8,7 +8,7 @@ def join_data(filestring="data:*", out='full_sorted'):
     matrix_list = [np.loadtxt(f, delimiter=',') for f in files]
 
     raw_data = np.concatenate(matrix_list)
-    sorted = raw_data[raw_data[:, 3].argsort()]
+    sorted = raw_data[raw_data[:, 2].argsort()]
 
     with open(out, 'wb') as f:
         np.savetxt(f, sorted, delimiter=',', fmt='%.5f')
@@ -27,5 +27,3 @@ def cheat(infile='full_sorted'):
 
 
 join_data()
-
-cheat()

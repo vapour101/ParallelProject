@@ -1,4 +1,3 @@
-time (ns), solution length, nodes touched, infeasible states counted
 39783, 6, 7, 1
 3220712, 10, 482, 472
 4546331, 12, 346, 334

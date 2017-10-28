@@ -14,13 +14,12 @@ def plot_all(filestring="data:*"):
         plt.savefig(filestring+files[i-1])
 
 def plot_better():
-    a=np.loadtxt("better_data2", delimiter=',')
-    plt.loglog(a[:, 3], a[:, 0], 'r+', label="Serial")
-    plt.loglog(a[:, 3], a[:, 1], 'gx', label="Parallel")
+    a=np.loadtxt("full_sorted", delimiter=',')
+    plt.semilogy(a[:, 1], a[:, 0], 'r+', label="Serial")
     plt.xlabel("Number of game states touched")
     plt.ylabel("Time (nanoseconds)")
     plt.legend(loc='upper left')
     plt.savefig("better_graph")
 
-
 plot_better()
+
